@@ -10,6 +10,7 @@ function getDeltaTime()
 	endFrameMillis = startFrameMillis;
 	startFrameMillis = Date.now();
 
+
 	var deltaTime = (startFrameMillis - endFrameMillis) * 0.001;
 	
 
@@ -20,47 +21,50 @@ function getDeltaTime()
 }
 
 
+
 var SCREEN_WIDTH = canvas.width;
 var SCREEN_HEIGHT = canvas.height;
-
 
 
 var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
 
-
 var chuckNorris = document.createElement("img");
 chuckNorris.src = "hero.png";
 
+
+var player = new Player();
+var keyboard = new Keyboard();
+
 function run()
 {
-	context.fillStyle = "#ccc";		
-	context.fillRect(0, 0, canvas.width, canvas.height);
-	
-	var deltaTime = getDeltaTime();
-	
-	context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
-	
-		
+context.fillStyle = "#ccc";
+context.fillRect(0, 0, canvas.width, canvas.height);
+var deltaTime = getDeltaTime();
+player.update(deltaTime);
+player.draw();
 
-	fpsTime += deltaTime;
-	fpsCount++;
-	if(fpsTime >= 1)
-	{
-		fpsTime -= 1;
-		fps = fpsCount;
-		fpsCount = 0;
-	}		
-		
+fpsTime += deltaTime;
+fpsCount++;
+if(fpsTime >= 1)
+{
+fpsTime -= 1;
+fps = fpsCount;
+fpsCount = 0;
+}
 
-	context.fillStyle = "#f00";
-	context.font="14px Arial";
-	context.fillText("FPS: " + fps, 5, 20, 100);
+context.fillStyle = "#f00";
+context.font="14px Arial";
+context.fillText("FPS: " + fps, 5, 20, 100);
 }
 
 
+//-------------------- Don't modify anything below here
 
+
+// This code will set up the framework so that the 'run' function is called 60 times per second.
+// We have a some options to fall back on in case the browser doesn't support our preferred method.
 (function() {
   var onEachFrame;
   if (window.requestAnimationFrame) {
