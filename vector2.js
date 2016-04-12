@@ -19,7 +19,7 @@ var Vector2 = function()
 	}
 	this magnitude = function()
 	{
-		return Math.sqrt(this.x * this.x + this.y * this.y )
+		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 	this.normalize = function()
 	{

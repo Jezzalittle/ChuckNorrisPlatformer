@@ -1,0 +1,6 @@
+
+
+var Enemy = function ()
+{
+	
+}
