@@ -1,3 +1,5 @@
+
+
 var canvas = document.getElementById("gameCanvas");
 var context = canvas.getContext("2d");
 
@@ -30,12 +32,18 @@ var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
 
+
+
+
 var chuckNorris = document.createElement("img");
 chuckNorris.src = "hero.png";
 
 
 var player = new Player();
 var keyboard = new Keyboard();
+var enemy = new Enemy();
+var bullets = [];
+bullets.push(new Bullet());
 
 function run()
 {
@@ -44,6 +52,17 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 var deltaTime = getDeltaTime();
 player.update(deltaTime);
 player.draw();
+enemy.update(deltaTime);
+enemy.draw();
+
+
+for(var i = 0; i < bullets.length; ++i)
+{
+	bullets[i].update(deltaTime);
+	bullets[i].draw();
+}
+
+
 
 fpsTime += deltaTime;
 fpsCount++;
@@ -60,11 +79,6 @@ context.fillText("FPS: " + fps, 5, 20, 100);
 }
 
 
-//-------------------- Don't modify anything below here
-
-
-// This code will set up the framework so that the 'run' function is called 60 times per second.
-// We have a some options to fall back on in case the browser doesn't support our preferred method.
 (function() {
   var onEachFrame;
   if (window.requestAnimationFrame) {
