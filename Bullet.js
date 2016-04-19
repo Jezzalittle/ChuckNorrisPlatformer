@@ -8,7 +8,7 @@ this.velocity = new Vector2(1,0);
 this.width = 0;
 this.height = 0;
 var speed = 256;
-this.image.src = "";
+this.image.src = "bullet.png";
 
 this.velocity.rotateDirection(this.rotation);
 this.velocity.multiplyScalar(speed);
