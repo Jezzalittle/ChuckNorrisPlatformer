@@ -1,12 +1,12 @@
 
 var canvas = document.getElementById("gameCanvas");
 canvas.height = 525;
-canvas.width = window.innerWidth;
+canvas.width = window.innerWidth - 10;
 var context = canvas.getContext("2d");
 
 var startFrameMillis = Date.now();
 var endFrameMillis = Date.now();
-
+var viewOffset = new Vector2();
 
 function getDeltaTime()
 {
@@ -41,7 +41,7 @@ var LAYER_PLATFORMS = 1;
 var LAYER_LADDERS = 2;
 
 var METER = TILE;
-var GRAVITY = METER * 9.8 * 6;
+var GRAVITY = METER * 9.8 * 3 ;
 var MAXDX = METER * 10;
 var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
@@ -76,12 +76,21 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 	
 	var deltaTime = getDeltaTime();
 	context.drawImage(background, 0, 64, canvas.width, canvas.height);
-
+	
+	context.save();
+	if (player.position.x >= viewOffset.x + canvas.width/4)
+	{
+			viewOffset.x = player.position.x - canvas.width / 4;
+		
+	}
+	context.translate(-viewOffset.x ,0);
 	drawMap();
-
+	
 	player.update(deltaTime);
 	player.draw();
-
+	
+	context.restore();
+	
 	fpsTime += deltaTime;
 	fpsCount++;
 	
@@ -101,26 +110,21 @@ context.fillText("FPS: " + fps, 5, 20, 100);
 
 function cellAtPixelCoord(layer, x,y)
 {
-	if(x<0 || x>SCREEN_WIDTH)
-	return 1;
-
-	if(y>SCREEN_HEIGHT)
-	return 0;
-
-	return cellAtTileCoord(layer, p2t(x), p2t(y));
+if(x<0 || x>SCREEN_WIDTH) 
+return 1;
+if(y>SCREEN_HEIGHT)
+return 0;
+return cellAtTileCoord(layer, p2t(x), p2t(y));
 };
-
-function cellAtTileCoord(layer, tx, ty) 
+function cellAtTileCoord(layer, tx, ty)
 {
-	if(tx<0 || tx>=MAP.tw)
-	return 1;
-
-	if(ty>=MAP.th)
-	return 0;
-
-
-	return cells[layer][ty][tx];
+if(tx<0 || tx>=MAP.tw)
+return 1;
+if(ty < 0 || ty>=MAP.th)
+return 0;
+return cells[layer][ty][tx];
 };
+
 
 function tileToPixel(tile)
 {
@@ -157,7 +161,7 @@ function drawMap()
 					var tileIndex = level1.layers[layerIdx].data[idx] - 1;
 					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
 					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
-					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE+1, TILESET_TILE+1);
 				}
 				idx++;
 			}
