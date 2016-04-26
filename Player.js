@@ -33,10 +33,12 @@ this.sprite.setAnimationOffset(i, -55, -87);
 }
 
 this.position = new Vector2();
-this.position.set( 9*TILE, 0*TILE );
+this.position.set( 1*TILE, 19*TILE );
 this.width = 159;
 this.height = 163;
 
+this.offset = new Vector2();
+this.offset.set(0,-TILE/2)
 
 this.velocity = new Vector2();
 this.falling = true;
@@ -142,57 +144,53 @@ this.sprite.setAnimation(ANIM_JUMP_RIGHT)
  this.velocity.x = 0;
  }
 
+var position = this.position.copy();
+position.add(this.offset)
 
 
-var tx = pixelToTile(this.position.x);
-var ty = pixelToTile(this.position.y);
-var nx = (this.position.x)%TILE;
-var ny = (this.position.y)%TILE;
+var tx = pixelToTile(position.x);
+var ty = pixelToTile(position.y);
+var nx = (position.x)%TILE;
+var ny = (position.y)%TILE;
 
 var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
 var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);
 var celldown = cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
-var celldiag = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty + 1);
 
 
 
 
  if (this.velocity.y > 0) {
-if ((celldown && !cell) || (celldiag && !cellright && nx)) {
+if ((celldown && !cell)) {
 
- this.position.y = tileToPixel(ty);
- this.velocity.y = 0; 
+ this.position.y = tileToPixel(ty) - this.offset.y;
+ this.velocity.y = 0 ; 
  this.falling = false; 
  this.jumping = false;
  ny = 0; 
 }
 }
 else if (this.velocity.y < 0) {
-if ((cell && !celldown) || (cellright && !celldiag && nx)) {
+if ((cell && !celldown)) {
 
- this.position.y = tileToPixel(ty + 1);
+ this.position.y = tileToPixel(ty + 1) - this.offset.y;
  this.velocity.y = 0; 
 
  cell = celldown;
- cellright = celldiag;
  ny = 0;
 }
 }
 if (this.velocity.x > 0) {
- if ((cellright && !cell) || (celldiag && !celldown && ny)) {
+ if ((cellright && !cell)) {
 
- this.position.x = tileToPixel(tx);
+ this.position.x = tileToPixel(tx) - this.offset.x;
  this.velocity.x = 0;
  }
 }
-
-
-
-
 else if (this.velocity.x < 0) {
- if ((cell && !cellright) || (celldown && !celldiag && ny)) {
+ if ((cell && !cellright)) {
 
-this.position.x = tileToPixel(tx + 1);
+this.position.x = tileToPixel(tx + 1) - this.offset.x;
 this.velocity.x = 0; 
 }
 }

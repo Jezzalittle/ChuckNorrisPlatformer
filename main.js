@@ -1,7 +1,7 @@
 
 var canvas = document.getElementById("gameCanvas");
-canvas.height = 525;
-canvas.width = window.innerWidth - 10;
+canvas.height = window.innerHeight - 20;
+canvas.width = window.innerWidth - 20;
 var context = canvas.getContext("2d");
 
 var startFrameMillis = Date.now();
@@ -26,18 +26,21 @@ function getDeltaTime()
 var SCREEN_WIDTH = canvas.width;
 var SCREEN_HEIGHT = canvas.height;
 
-var LAYER_COUNT = 3;
-var MAP = { tw: 60, th: 15 };
-var TILE = 35;
-var TILESET_TILE = TILE * 2;
-var TILESET_PADDING = 2;
-var TILESET_SPACING = 2;
-var TILESET_COUNT_X = 14;
-var TILESET_COUNT_Y = 14;
+var LAYER_COUNT = level.layers.length;
+var MAP = { tw: level.width, th: level.height};
+var TILE = level.tilewidth;
+var TILESET_TILE = level.tilesets[0].tilewidth;
+var TILESET_PADDING = level.tilesets[0].margin;
+var TILESET_SPACING = level.tilesets[0].spacing;
+var TILESET_COUNT_X = level.tilesets[0].columns;
+var TILESET_COUNT_Y = level.tilesets[0].tilecount / TILESET_COUNT_X;
 
-var LAYER_COUNT = 3;
-var LAYER_BACKGOUND = 0;
-var LAYER_PLATFORMS = 1;
+var tileset = document.createElement("img");
+tileset.src = level.tilesets[0].image
+
+
+var LAYER_BACKGOUND = 1;
+var LAYER_PLATFORMS = 3;
 var LAYER_LADDERS = 2;
 
 var METER = TILE;
@@ -49,8 +52,7 @@ var FRICTION = MAXDX * 6;
 var JUMP = METER * 1500;
 
 
-var tileset = document.createElement("img");
-tileset.src = "tileset.png";
+
 
 var fps = 0;
 var fpsCount = 0;
@@ -83,6 +85,10 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 			viewOffset.x = player.position.x - canvas.width / 4;
 		
 	}
+
+	
+	
+	
 	context.translate(-viewOffset.x ,0);
 	drawMap();
 	
@@ -152,16 +158,16 @@ function drawMap()
 	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
 	{
 		var idx = 0;
-		for( var y = 0; y < level1.layers[layerIdx].height; y++ )
+		for( var y = 0; y < level.layers[layerIdx].height; y++ )
 		{
-			for( var x = 0; x < level1.layers[layerIdx].width; x++ )
+			for( var x = 0; x < level.layers[layerIdx].width; x++ )
 			{
-				if( level1.layers[layerIdx].data[idx] != 0 )
+				if( level.layers[layerIdx].data[idx] != 0 )
 				{
-					var tileIndex = level1.layers[layerIdx].data[idx] - 1;
+					var tileIndex = level.layers[layerIdx].data[idx] - 1;
 					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
 					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
-					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE+1, TILESET_TILE+1);
+					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y)*TILE, TILESET_TILE+1, TILESET_TILE+1);
 				}
 				idx++;
 			}
@@ -176,18 +182,15 @@ function initialize()
 	{
 		cells[layerIdx] = []; 
 		var idx = 0;
-		for(var y = 0; y < level1.layers[layerIdx].height; y++) 
+		for(var y = 0; y < level.layers[layerIdx].height; y++) 
 			{
 			cells[layerIdx][y] = [];
-			for(var x = 0; x < level1.layers[layerIdx].width; x++) 
+			for(var x = 0; x < level.layers[layerIdx].width; x++) 
 				{
-				if(level1.layers[layerIdx].data[idx] != 0) 
+				if(level.layers[layerIdx].data[idx] != 0) 
 					{
 
 					cells[layerIdx][y][x] = 1;
-					cells[layerIdx][y-1][x] = 1;
-					cells[layerIdx][y-1][x+1] = 1;
-					cells[layerIdx][y][x+1] = 1;
 					}
 
 					
