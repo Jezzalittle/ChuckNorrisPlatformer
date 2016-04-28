@@ -42,13 +42,14 @@ tileset.src = level.tilesets[0].image
 var LAYER_BACKGOUND = 1;
 var LAYER_PLATFORMS = 3;
 var LAYER_LADDERS = 2;
+var LAYER_LAVA = 4;
 
 var METER = TILE;
-var GRAVITY = METER * 9.8 * 3 ;
+var GRAVITY = METER * 15 * 3 ;
 var MAXDX = METER * 10;
 var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
-var FRICTION = MAXDX * 6;
+var FRICTION = MAXDX * 0.5;
 var JUMP = METER * 1500;
 
 
@@ -60,10 +61,13 @@ var fpsTime = 0;
 
 
 var background = document.createElement("img");
-background.src = "BG_01.png"
+background.src = "back_cave.png"
 
 var chuckNorris = document.createElement("img");
 chuckNorris.src = "hero.png";
+
+var darkness = document.createElement("img");
+darkness.src = "THE_DARK_SIDE.png"
 
 
 var player = new Player();
@@ -77,28 +81,35 @@ context.fillStyle = "#ccc";
 context.fillRect(0, 0, canvas.width, canvas.height);
 	
 	var deltaTime = getDeltaTime();
-	context.drawImage(background, 0, 64, canvas.width, canvas.height);
+	
 	
 	context.save();
-	if (player.position.x >= viewOffset.x + canvas.width/4)
+	if (player.position.x >= viewOffset.x + canvas.width/2)
 	{
-			viewOffset.x = player.position.x - canvas.width / 4;
+			viewOffset.x = player.position.x - canvas.width / 2 + 25;
 		
 	}
+	
+	if(player.position.x <= viewOffset.x + canvas.width/2)
+	{
+		viewOffset.x = player.position.x - canvas.width / 2 +25;
+	} 
+	
 
+	viewOffset.y = player.position.y - (canvas.height/2) + 25 
 	
 	
-	
-	context.translate(-viewOffset.x ,0);
+	context.translate(-viewOffset.x , -viewOffset.y);
+			context.drawImage(background, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
 	drawMap();
-	
+	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
 	player.update(deltaTime);
 	player.draw();
-	
+
 	context.restore();
-	
 	fpsTime += deltaTime;
 	fpsCount++;
+
 	
 	if(fpsTime >= 1)
 	{
@@ -106,6 +117,8 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 		fps = fpsCount;
 		fpsCount = 0;
 	}
+
+
 
 context.fillStyle = "#f00";
 context.font="14px Arial";
@@ -202,6 +215,7 @@ function initialize()
 				}
 			}
 	}
+	
 }
 initialize();
 

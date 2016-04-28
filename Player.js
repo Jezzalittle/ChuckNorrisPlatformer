@@ -45,6 +45,8 @@ this.falling = true;
 this.jumping = false;
 this.direction = LEFT;
 
+this.isdead = false
+
 
 }
 
@@ -56,6 +58,7 @@ this.sprite.update(deltaTime);
  var right = false;
  var jump = false;
 
+ 
  
  if(keyboard.isKeyDown(keyboard.KEY_LEFT) == true) 
  {
@@ -110,6 +113,8 @@ this.sprite.update(deltaTime);
  var falling = this.falling;
  var ddx = 0; 
  var ddy = GRAVITY;
+ 
+
 
  if (left)
  ddx = ddx - ACCEL; 
@@ -152,6 +157,10 @@ var tx = pixelToTile(position.x);
 var ty = pixelToTile(position.y);
 var nx = (position.x)%TILE;
 var ny = (position.y)%TILE;
+
+ 
+
+ //if (cellAtTileCoord(LAYER_LAVA, tx, ty)) 
 
 var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
 var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);
