@@ -160,7 +160,10 @@ var ny = (position.y)%TILE;
 
  
 
- //if (cellAtTileCoord(LAYER_LAVA, tx, ty)) 
+ if(cellAtTileCoord(LAYER_LAVA, tx, ty - 1))
+ {
+	this.isdead = true
+ }	 
 
 var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
 var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);

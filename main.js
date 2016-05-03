@@ -39,10 +39,11 @@ var tileset = document.createElement("img");
 tileset.src = level.tilesets[0].image
 
 
+var LAYER_DOOR = 0;
 var LAYER_BACKGOUND = 1;
-var LAYER_PLATFORMS = 3;
-var LAYER_LADDERS = 2;
-var LAYER_LAVA = 4;
+var LAYER_PLATFORMS = 4;
+var LAYER_PLAYER = 2;
+var LAYER_LAVA = 3;
 
 var METER = TILE;
 var GRAVITY = METER * 15 * 3 ;
@@ -51,6 +52,11 @@ var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
 var FRICTION = MAXDX * 0.5;
 var JUMP = METER * 1500;
+
+var gameStateMainMenu = 0;
+var gameStateLevel1 = 1;
+var gameStateGameOver = 2;
+var gameState = gameStateMainMenu;
 
 
 
@@ -69,21 +75,33 @@ chuckNorris.src = "hero.png";
 var darkness = document.createElement("img");
 darkness.src = "THE_DARK_SIDE.png"
 
+var titleScreen = document.createElement("img");
+titleScreen.src = "titleScreen.jpg"
+
+var ded = document.createElement("img");
+ded.src = "ded.jpg"
 
 var player = new Player();
 var keyboard = new Keyboard();
 
 
 
-function run()
+
+
+
+function runMenu(deltaTime)
 {
-context.fillStyle = "#ccc";
-context.fillRect(0, 0, canvas.width, canvas.height);
+	context.drawImage(titleScreen, 0,0)
+	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
+	{
+		gameState = gameStateLevel1
+	}
 	
-	var deltaTime = getDeltaTime();
-	
-	
-	context.save();
+}
+
+function runGame(deltaTime)
+{
+		context.save();
 	if (player.position.x >= viewOffset.x + canvas.width/2)
 	{
 			viewOffset.x = player.position.x - canvas.width / 2 + 25;
@@ -95,17 +113,21 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 		viewOffset.x = player.position.x - canvas.width / 2 +25;
 	} 
 	
+	if(player.isdead == true)
+	{
+		gameState = gameStateGameOver;
+	}
 
 	viewOffset.y = player.position.y - (canvas.height/2) + 25 
 	
 	
 	context.translate(-viewOffset.x , -viewOffset.y);
-			context.drawImage(background, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
-	drawMap();
-	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
+	context.drawImage(background, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
+	drawMapBackground();
 	player.update(deltaTime);
 	player.draw();
-
+	drawMapForeground();
+	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
 	context.restore();
 	fpsTime += deltaTime;
 	fpsCount++;
@@ -123,6 +145,43 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 context.fillStyle = "#f00";
 context.font="14px Arial";
 context.fillText("FPS: " + fps, 5, 20, 100);
+}
+
+function runGameOver(deltaTime)
+{
+	context.drawImage(ded,0,0)
+	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
+	{
+		player = new Player;
+		gameState = gameStateMainMenu;
+	}
+}
+
+
+function run()
+{
+context.fillStyle = "#ccc";
+context.fillRect(0, 0, canvas.width, canvas.height);
+	
+	var deltaTime = getDeltaTime();
+	
+	
+switch(gameState)
+{
+	case gameStateMainMenu:
+	runMenu(deltaTime);
+	break;
+	case gameStateLevel1:
+	runGame(deltaTime);
+	break;
+	case gameStateGameOver:
+	runGameOver(deltaTime);
+	break;
+}
+	
+	
+	
+
 }
 
 
@@ -166,9 +225,9 @@ function bound(value, min, max)
 return value;
 }
 
-function drawMap()
+function drawMapBackground()
 {
-	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+	for(var layerIdx=0; layerIdx<LAYER_PLAYER; layerIdx++)
 	{
 		var idx = 0;
 		for( var y = 0; y < level.layers[layerIdx].height; y++ )
@@ -187,6 +246,30 @@ function drawMap()
 		}
 	}
 }
+
+
+function drawMapForeground()
+{
+	for(var layerIdx=LAYER_PLAYER; layerIdx<LAYER_COUNT; layerIdx++)
+	{
+		var idx = 0;
+		for( var y = 0; y < level.layers[layerIdx].height; y++ )
+		{
+			for( var x = 0; x < level.layers[layerIdx].width; x++ )
+			{
+				if( level.layers[layerIdx].data[idx] != 0 )
+				{
+					var tileIndex = level.layers[layerIdx].data[idx] - 1;
+					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y)*TILE, TILESET_TILE+1, TILESET_TILE+1);
+				}
+				idx++;
+			}
+		}
+	}
+}
+
 
 var cells = []; 
 function initialize()

@@ -10,7 +10,7 @@
 		this.KEY_UP = 38;
 		this.KEY_RIGHT = 39;	
 		this.KEY_DOWN = 40;
-		
+		this.KEY_ENTER = 13;
 		this.KEY_SHIFT = 16;
 		};
 	
