@@ -38,12 +38,13 @@ var TILESET_COUNT_Y = level.tilesets[0].tilecount / TILESET_COUNT_X;
 var tileset = document.createElement("img");
 tileset.src = level.tilesets[0].image
 
-
+var LAYER_DOOR = 0;
+var LAYER_DOOR = 0;
 var LAYER_DOOR = 0;
 var LAYER_BACKGOUND = 1;
-var LAYER_PLATFORMS = 4;
 var LAYER_PLAYER = 2;
 var LAYER_LAVA = 3;
+var LAYER_PLATFORMS = 4;
 
 var METER = TILE;
 var GRAVITY = METER * 15 * 3 ;
@@ -58,7 +59,8 @@ var gameStateLevel1 = 1;
 var gameStateGameOver = 2;
 var gameState = gameStateMainMenu;
 
-
+var score = 0;
+var lives = 3;
 
 
 var fps = 0;
@@ -81,6 +83,33 @@ titleScreen.src = "titleScreen.jpg"
 var ded = document.createElement("img");
 ded.src = "ded.jpg"
 
+var heartImage = document.createElement("img");
+heartImage.src = "heart.png"
+
+var introMusic = new Howl(
+{
+		urls:["IntroTheme.mp3"],
+		loop: true,
+		buffer: true,
+		volume: 0.5
+});
+var gameMusic = new Howl(
+{
+		urls:["DungeonTheme.mp3"],
+		loop: true,
+		buffer: true,
+		volume: 0.5
+});
+var sfxFire = new Howl(
+{
+		urls:["shot.mp3"],
+		buffer: true,
+		volume: 0.5,
+		onend: function() {
+		isSfxPlaying = false;
+		}
+});;
+
 var player = new Player();
 var keyboard = new Keyboard();
 
@@ -91,6 +120,11 @@ var keyboard = new Keyboard();
 
 function runMenu(deltaTime)
 {
+	if (introMusic.isPlaying == false)
+	{
+	introMusic.play();
+	}
+	
 	context.drawImage(titleScreen, 0,0)
 	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
 	{
@@ -101,6 +135,10 @@ function runMenu(deltaTime)
 
 function runGame(deltaTime)
 {
+	if (gameMusic.isPlaying == false)
+	{
+	gameMusic.play();
+	}
 		context.save();
 	if (player.position.x >= viewOffset.x + canvas.width/2)
 	{
@@ -140,8 +178,14 @@ function runGame(deltaTime)
 		fpsCount = 0;
 	}
 
-
-
+for(var i=0; i<lives; i++)
+{
+context.drawImage(heartImage, 5 + ((heartImage.width+2)*i), 60);
+}
+context.fillStyle = "yellow";
+context.font= "36px Arial";
+var scoreText = "Score: " + score;
+context.fillText(scoreText, 5, 50);
 context.fillStyle = "#f00";
 context.font="14px Arial";
 context.fillText("FPS: " + fps, 5, 20, 100);
@@ -298,6 +342,13 @@ function initialize()
 				}
 			}
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 }
 initialize();
