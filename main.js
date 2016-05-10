@@ -39,12 +39,13 @@ var tileset = document.createElement("img");
 tileset.src = level.tilesets[0].image
 
 var LAYER_DOOR = 0;
-var LAYER_DOOR = 0;
-var LAYER_DOOR = 0;
-var LAYER_BACKGOUND = 1;
-var LAYER_PLAYER = 2;
-var LAYER_LAVA = 3;
-var LAYER_PLATFORMS = 4;
+var LAYER_CLOSED_DOOR = 1;
+var LAYER_OPEN_DOOR = 2;
+var LAYER_LADDER = 3;
+var LAYER_BACKGOUND = 4;
+var LAYER_LAVA = 5;
+var LAYER_PLATFORMS = 6;
+var LAYER_PLAYER = 7;
 
 var METER = TILE;
 var GRAVITY = METER * 15 * 3 ;
@@ -57,11 +58,12 @@ var JUMP = METER * 1500;
 var gameStateMainMenu = 0;
 var gameStateLevel1 = 1;
 var gameStateGameOver = 2;
+var gameStateGameWin = 3;
 var gameState = gameStateMainMenu;
 
 var score = 0;
 var lives = 3;
-
+var doorOpen = false
 
 var fps = 0;
 var fpsCount = 0;
@@ -86,8 +88,12 @@ ded.src = "ded.jpg"
 var heartImage = document.createElement("img");
 heartImage.src = "heart.png"
 
+var GameWin = document.createElement("img");
+GameWin.src = "EndGame.jpg"
+
 var introMusic = new Howl(
-{
+{	
+		autoplay: true,
 		urls:["IntroTheme.mp3"],
 		loop: true,
 		buffer: true,
@@ -120,25 +126,20 @@ var keyboard = new Keyboard();
 
 function runMenu(deltaTime)
 {
-	if (introMusic.isPlaying == false)
-	{
-	introMusic.play();
-	}
+	
 	
 	context.drawImage(titleScreen, 0,0)
 	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
 	{
 		gameState = gameStateLevel1
+		introMusic.stop();
+		gameMusic.play();
 	}
 	
 }
 
 function runGame(deltaTime)
 {
-	if (gameMusic.isPlaying == false)
-	{
-	gameMusic.play();
-	}
 		context.save();
 	if (player.position.x >= viewOffset.x + canvas.width/2)
 	{
@@ -156,6 +157,14 @@ function runGame(deltaTime)
 		gameState = gameStateGameOver;
 	}
 
+	if(doorOpen)
+	{
+		level.layers[2].visible = false
+		level.layers[1].visible = false
+		
+	}
+	
+	
 	viewOffset.y = player.position.y - (canvas.height/2) + 25 
 	
 	
@@ -191,6 +200,20 @@ context.font="14px Arial";
 context.fillText("FPS: " + fps, 5, 20, 100);
 }
 
+
+function runGameWin(deltaTime)
+{
+	context.drawImage(GameWin,0,0)
+	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
+	{
+		player = new Player;
+		gameState = gameStateMainMenu;
+	}
+}
+
+
+
+
 function runGameOver(deltaTime)
 {
 	context.drawImage(ded,0,0)
@@ -218,9 +241,13 @@ switch(gameState)
 	case gameStateLevel1:
 	runGame(deltaTime);
 	break;
+	case gameStateGameWin:
+	runGameWin(deltaTime);
+	break;
 	case gameStateGameOver:
 	runGameOver(deltaTime);
 	break;
+	
 }
 	
 	
@@ -273,6 +300,7 @@ function drawMapBackground()
 {
 	for(var layerIdx=0; layerIdx<LAYER_PLAYER; layerIdx++)
 	{
+		if(level.layers[layerIdx].visible == false) continue;
 		var idx = 0;
 		for( var y = 0; y < level.layers[layerIdx].height; y++ )
 		{

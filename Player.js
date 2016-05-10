@@ -60,6 +60,7 @@ this.sprite.update(deltaTime);
 
  
  
+ 
  if(keyboard.isKeyDown(keyboard.KEY_LEFT) == true) 
  {
 	left = true;
@@ -162,8 +163,20 @@ var ny = (position.y)%TILE;
 
  if(cellAtTileCoord(LAYER_LAVA, tx, ty - 1))
  {
-	this.isdead = true
+	this.isdead = true;
  }	 
+ 
+ if(cellAtTileCoord(LAYER_OPEN_DOOR, tx, ty))
+ {
+	doorOpen = true;
+ }
+ 
+ if(cellAtTileCoord(LAYER_DOOR, tx, ty) && doorOpen == true)
+ {
+	 gameState = gameStateGameWin;
+ }
+ 
+ 
 
 var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
 var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);
