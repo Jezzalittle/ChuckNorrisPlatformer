@@ -57,7 +57,6 @@ var JUMP = METER * 1500;
 
 var gameStateMainMenu = 0;
 var gameStateLevel1 = 1;
-var gameStateGameOver = 2;
 var gameStateGameWin = 3;
 var gameState = gameStateMainMenu;
 
@@ -68,6 +67,7 @@ var doorOpen = false
 var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
+var sfxIsPlaying = false; 
 
 
 var background = document.createElement("img");
@@ -106,6 +106,13 @@ var gameMusic = new Howl(
 		buffer: true,
 		volume: 0.5
 });
+var sfxFlames = new Howl(
+{
+		urls:["qubodupFireLoop.ogg"],
+		loop: true,
+		buffer: true,
+		volume: 0.1
+});
 var sfxFire = new Howl(
 {
 		urls:["shot.mp3"],
@@ -131,6 +138,8 @@ function runMenu(deltaTime)
 	context.drawImage(titleScreen, 0,0)
 	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
 	{
+		lives = 3
+		doorOpen = false
 		gameState = gameStateLevel1
 		introMusic.stop();
 		gameMusic.play();
@@ -154,7 +163,16 @@ function runGame(deltaTime)
 	
 	if(player.isdead == true)
 	{
-		gameState = gameStateGameOver;
+		gameState = gameStateLevel1;
+		player = new Player
+		lives = lives - 1
+		if(lives == 0)
+		{
+		introMusic.play();
+		gameMusic.stop();
+		gameState = gameStateMainMenu;
+		}
+		player.isdead = false
 	}
 
 	if(doorOpen)
@@ -164,6 +182,13 @@ function runGame(deltaTime)
 		
 	}
 	
+	
+	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && sfxIsPlaying == false)
+	{
+		 sfxFire.play();
+		 sfxIsPlaying = true;
+	}
+
 	
 	viewOffset.y = player.position.y - (canvas.height/2) + 25 
 	
@@ -209,20 +234,10 @@ function runGameWin(deltaTime)
 		player = new Player;
 		gameState = gameStateMainMenu;
 	}
-}
+} 
 
 
 
-
-function runGameOver(deltaTime)
-{
-	context.drawImage(ded,0,0)
-	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
-	{
-		player = new Player;
-		gameState = gameStateMainMenu;
-	}
-}
 
 
 function run()
@@ -244,11 +259,9 @@ switch(gameState)
 	case gameStateGameWin:
 	runGameWin(deltaTime);
 	break;
-	case gameStateGameOver:
-	runGameOver(deltaTime);
-	break;
 	
 }
+	
 	
 	
 	

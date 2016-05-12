@@ -98,6 +98,7 @@ this.sprite.update(deltaTime);
  
  if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true) 
  {
+	
 	jump = true;
 	if(left == true) 
 	{
@@ -127,6 +128,7 @@ this.sprite.update(deltaTime);
  ddx = ddx - FRICTION; 
  if (jump && !this.jumping && !falling)
  {
+
  ddy = ddy - JUMP; 
  this.jumping = true;
  if(this.direction == LEFT)
@@ -164,6 +166,7 @@ var ny = (position.y)%TILE;
  if(cellAtTileCoord(LAYER_LAVA, tx, ty - 1))
  {
 	this.isdead = true;
+	
  }	 
  
  if(cellAtTileCoord(LAYER_OPEN_DOOR, tx, ty))
