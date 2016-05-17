@@ -40,12 +40,15 @@ tileset.src = level.tilesets[0].image
 
 var LAYER_DOOR = 0;
 var LAYER_CLOSED_DOOR = 1;
+
 var LAYER_OPEN_DOOR = 2;
+var LAYER_OBJECT_ENEMIES = 6;
 var LAYER_LADDER = 3;
 var LAYER_BACKGOUND = 4;
 var LAYER_LAVA = 5;
-var LAYER_PLATFORMS = 6;
-var LAYER_PLAYER = 7;
+var LAYER_PLATFORMS = 7;
+var LAYER_PLAYER = 8;
+var LAYER_OBJECT_TRIGGERS = 9;
 
 var METER = TILE;
 var GRAVITY = METER * 15 * 3 ;
@@ -54,6 +57,12 @@ var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
 var FRICTION = MAXDX * 0.5;
 var JUMP = METER * 1500;
+
+var ENEMY_MAXDX = METER * 5;
+var ENEMY_ACCEL = ENEMY_MAXDX * 2;
+
+var enemies = [];
+
 
 var gameStateMainMenu = 0;
 var gameStateLevel1 = 1;
@@ -111,7 +120,7 @@ var sfxFlames = new Howl(
 		urls:["qubodupFireLoop.ogg"],
 		loop: true,
 		buffer: true,
-		volume: 0.1
+		volume: 0.05
 });
 var sfxFire = new Howl(
 {
@@ -125,6 +134,7 @@ var sfxFire = new Howl(
 
 var player = new Player();
 var keyboard = new Keyboard();
+var enemy = new Enemy();
 
 
 
@@ -174,7 +184,9 @@ function runGame(deltaTime)
 		}
 		player.isdead = false
 	}
+	
 
+	
 	if(doorOpen)
 	{
 		level.layers[2].visible = false
@@ -185,7 +197,7 @@ function runGame(deltaTime)
 	
 	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && sfxIsPlaying == false)
 	{
-		 sfxFire.play();
+		 sfxFlames.play();
 		 sfxIsPlaying = true;
 	}
 
@@ -198,6 +210,11 @@ function runGame(deltaTime)
 	drawMapBackground();
 	player.update(deltaTime);
 	player.draw();
+	for(var i=0; i<enemies.length; i++)
+	{
+		enemies[i].update(deltaTime);
+		enemies[i].draw();
+	}
 	drawMapForeground();
 	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
 	context.restore();
@@ -229,10 +246,12 @@ context.fillText("FPS: " + fps, 5, 20, 100);
 function runGameWin(deltaTime)
 {
 	context.drawImage(GameWin,0,0)
-	if(keyboard.isKeyDown(keyboard.KEY_ENTER) == true)
+	if(keyboard.isKeyDown(keyboard.KEY_SHIFT) == true)
 	{
 		player = new Player;
 		gameState = gameStateMainMenu;
+		introMusic.play();
+		gameMusic.stop();
 	}
 } 
 
@@ -272,6 +291,7 @@ switch(gameState)
 
 function cellAtPixelCoord(layer, x,y)
 {
+  sfxIsPlaying = true;
 if(x<0 || x>SCREEN_WIDTH) 
 return 1;
 if(y>SCREEN_HEIGHT)
@@ -325,6 +345,7 @@ function drawMapBackground()
 					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
 					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
 					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y)*TILE, TILESET_TILE+1, TILESET_TILE+1);
+					
 				}
 				idx++;
 			}
@@ -384,10 +405,22 @@ function initialize()
 			}
 	}
 	
-	
-	
-	
-	
+		// add enemies
+	idx = 0;
+	for(var y = 0; y < level.layers[LAYER_OBJECT_ENEMIES].height; y++) {
+	for(var x = 0; x < level.layers[LAYER_OBJECT_ENEMIES].width; x++) {
+	if(level.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) {
+	var px = tileToPixel(x);
+	var py = tileToPixel(y);
+	var e = new Enemy(px, py);
+	enemies.push(e);
+	}
+	idx++;
+	}
+	} 
+		
+		
+		
 	
 	
 	

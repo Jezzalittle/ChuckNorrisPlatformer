@@ -98,7 +98,7 @@ this.sprite.update(deltaTime);
  
  if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true) 
  {
-	
+	 sfxIsPlaying = false;
 	jump = true;
 	if(left == true) 
 	{
@@ -190,7 +190,7 @@ var celldown = cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
 
  if (this.velocity.y > 0) {
 if ((celldown && !cell)) {
-
+sfxFlames. stop();
  this.position.y = tileToPixel(ty) - this.offset.y;
  this.velocity.y = 0 ; 
  this.falling = false; 
