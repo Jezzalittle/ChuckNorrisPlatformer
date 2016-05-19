@@ -34,6 +34,7 @@ if(this.moveRight)
 if(celldiag && !cellright) {
 ddx = ddx + ENEMY_ACCEL; // enemy wants to go right
 }
+
 else {
 this.velocity.x = 0;
 this.moveRight = false;

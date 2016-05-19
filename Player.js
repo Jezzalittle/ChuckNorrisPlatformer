@@ -96,7 +96,7 @@ this.sprite.update(deltaTime);
 	}
  }
  
- if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true) 
+ if(keyboard.isKeyDown(keyboard.KEY_UP) == true) 
  {
 	 sfxIsPlaying = false;
 	jump = true;
@@ -166,10 +166,9 @@ var ny = (position.y)%TILE;
  if(cellAtTileCoord(LAYER_LAVA, tx, ty - 1))
  {
 	this.isdead = true;
-	
  }	 
  
- if(cellAtTileCoord(LAYER_OPEN_DOOR, tx, ty))
+  if(cellAtTileCoord(LAYER_OPEN_DOOR, tx, ty))
  {
 	doorOpen = true;
  }

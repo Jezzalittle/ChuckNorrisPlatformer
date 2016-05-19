@@ -161,7 +161,7 @@ function runGame(deltaTime)
 {
 		context.save();
 	if (player.position.x >= viewOffset.x + canvas.width/2)
-	{
+	 {
 			viewOffset.x = player.position.x - canvas.width / 2 + 25;
 		
 	}
@@ -184,6 +184,8 @@ function runGame(deltaTime)
 		}
 		player.isdead = false
 	}
+
+
 	
 
 	
@@ -195,9 +197,8 @@ function runGame(deltaTime)
 	}
 	
 	
-	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && sfxIsPlaying == false)
+	if(keyboard.isKeyDown(keyboard.KEY_UP) == true && sfxIsPlaying == false)
 	{
-		 sfxFlames.play();
 		 sfxIsPlaying = true;
 	}
 
@@ -214,6 +215,7 @@ function runGame(deltaTime)
 	{
 		enemies[i].update(deltaTime);
 		enemies[i].draw();
+
 	}
 	drawMapForeground();
 	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
@@ -221,7 +223,6 @@ function runGame(deltaTime)
 	fpsTime += deltaTime;
 	fpsCount++;
 
-	
 	if(fpsTime >= 1)
 	{
 		fpsTime -= 1;
@@ -240,6 +241,7 @@ context.fillText(scoreText, 5, 50);
 context.fillStyle = "#f00";
 context.font="14px Arial";
 context.fillText("FPS: " + fps, 5, 20, 100);
+
 }
 
 
