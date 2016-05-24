@@ -3,7 +3,7 @@ var Enemy = function(x, y)
 {
 this.sprite = new Sprite("badmen.png");
 this.sprite.buildAnimation(1, 1, 60, 120, 0.3, [0]);
-this.sprite.setAnimationOffset(0, -35, -40);
+this.sprite.setAnimationOffset(0, -30, -60);
 this.position = new Vector2();
 this.position.set(x, y);
 this.velocity = new Vector2();

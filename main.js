@@ -186,7 +186,6 @@ function runGame(deltaTime)
 	}
 
 
-	
 
 	
 	if(doorOpen)
@@ -219,6 +218,13 @@ function runGame(deltaTime)
 	}
 	drawMapForeground();
 	context.drawImage(darkness, viewOffset.x ,viewOffset.y, canvas.width, canvas.height);
+	for(var i = 0; i < enemies.length; i++)
+	{
+	if (intersects(player.position.x - 10, player.position.y -50, player.width/2.5,player.height/2, enemies[i].position.x -30,enemies[i].position.y -30,30, 30) == true)
+	{
+		player.isdead = true;
+	}
+	}
 	context.restore();
 	fpsTime += deltaTime;
 	fpsCount++;
@@ -242,8 +248,9 @@ context.fillStyle = "#f00";
 context.font="14px Arial";
 context.fillText("FPS: " + fps, 5, 20, 100);
 
-}
 
+	
+}
 
 function runGameWin(deltaTime)
 {
